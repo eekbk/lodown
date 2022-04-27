@@ -22,3 +22,45 @@ function each(collection, action) {
     }
 }
 module.exports.each = each;
+
+/**
+* identity: Designed to take any value and return it unchanged
+*
+* @param {value} data : the value to be returned
+* 
+*/
+
+ _.identity = function(value){
+    return value;
+};
+
+
+/**
+* typeOf: Designed to take a value and return a string representing the type of value 
+*   it is, including if it is an array or null
+*
+* @param {value} value : the value to be analyzed
+*/
+
+_.typeOf = function(value){
+    // check if value is an array, and if so return 'array'
+    if (Array.isArray(value)) {
+        return 'array';
+    // check if value is null, if so return 'null';
+    } else if (value === null) {
+        return 'null';
+    // otherwise, return typeof method on value
+    } else {
+        return typeof value;
+    }
+};
+
+/**
+* first: designed to take in an array and return a defined number of elemnts from
+*   the beginning of array
+*
+* @param {Array} array : the array to search through. If not an array, an empty 
+*   array will be returned.
+* @param {number} number : the number of elements to return
+*/
+
