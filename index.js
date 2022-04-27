@@ -252,3 +252,63 @@ _.reject = function(array, func) {
 module.exports.reject = reject;
 
 /////////////////////////////////////////////////////////////////////////////////////////
+/**
+* reduce: Designed to execute a callback function on each element of an array, passing in
+*   the return value on the preceding element.
+*
+* @param {Array} array : The array containing the elements on which to call the function.
+* @param {Function} func : The function that will be called on each element
+* @param {Seed} seed : an initial value for the "previousValue" the first time the
+*   function is called. If no seed is given, the initial value is the first element in the
+*   array and the loop starts at the second index.
+*/
+
+_.reduce = function(array, func, seed) {
+    //determine if seed is undefined
+    if (seed === undefined) {
+        seed = array[0];
+        // iterate through input array
+        for (let i = 1; i < array.length; i++) {
+            // reassign seed to the result of passing seed, the current value of the array, the current index and the collection
+            seed = func(seed, array[i], i, array);
+        }
+    } else {
+        // iterate through input array
+        for (let i = 0; i < array.length; i++){
+            seed = func(seed, array[i], i, array);
+        }
+    }
+    return seed;
+};
+module.exports.reduce = reduce;
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/**
+* extend: Designed to copy the properties from any number of objects into another object.
+*   This function is "destructive", meaning that it will change the value of the first 
+*   object passed in.
+*
+* @param {Object} object1 : This is the target object onto which the properties will be
+*   copied. Will be returned, changed, at end of function.
+* @param {Object} object2 : The object whose values will be copied onto the target object.
+*   Can pass as many objects as arguments as required.
+*/
+
+_.extend = function(object1, object2, ...objects) {
+    // iterate thru arguments, starting at index 1
+    for (let i = 1; i < arguments.length; i++) {
+        // iterate thru current object
+        for (let key in arguments[i]) {
+            // copy current properties to object 1
+            object1[key] = arguments[i][key];
+        }
+    }
+    // return object1
+    return object1;  
+};
+module.exports.extend = extend;
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+
+
