@@ -13,6 +13,7 @@ const { typeOf } = require("../eric-kuehnemann.github.io/projects/underpants/und
  * @param {Array or Object} collection: The collection over which to iterate.
  * @param {Function} action: The Function to be applied to each value in the 
  * collection
+ * 
  */
 function each(collection, action) {
     if(Array.isArray(collection)) {
@@ -32,6 +33,7 @@ module.exports.each = each;
 * identity: Designed to take any value and return it unchanged
 *
 * @param {value} data : the value to be returned
+* @return {value} data: function returns input value, unchanged
 * 
 */
 
@@ -46,6 +48,14 @@ module.exports.identity = identity;
 *   it is, including if it is an array or null
 *
 * @param {value} value : the value to be analyzed
+*
+* @return {string} : a string describing the type of value passed as an argument 
+*   i.e. 'string', 'boolean', 'object'.
+* Usage: 
+*       
+*       const freeBirdObservation = 'It is long';
+*       console.log(_.typeOf(freeBirdObservation));
+*           // prints 'string'
 */
 
 _.typeOf = function(value){
@@ -71,6 +81,13 @@ module.exports.typeOf = typeOf;
 *   array will be returned.
 * @param {number} number : the number of elements to return. If not a number, first 
 *   element will be returned.
+*
+* @return {Array}: an Array containing the first x number of elements from the input array
+*
+* Usage:
+*       let myArr = [ 'a', 'b', 'c', 'd' ];
+*       console.log(_.first(myArr, 2));     // prints [ 'a', 'b' ]
+}
 */
 
 _.first = function(array, number) {
@@ -105,6 +122,11 @@ module.exports.first = first;
 *   will be returned.
 * @param {Number} number : the number of elements to return. If not a number, final
 *   element will be returned.
+* @return {Array} collection: an array containing the final x number of elements from the input 
+*   array.
+* Usage:
+*       let myArr = [ 'A', 'B', 'C', 'D' ];
+*       console.log(_.last(myArray, 2))     // prints [ 'D', 'C' ];
 */
 
 _.last = function(array, number) {
@@ -136,8 +158,12 @@ module.exports.last = last;
 * indexOf: Designed to iterate through an array and return the index of the first 
 *   occurance of a value. If value is not found, -1 is returned
 *
-* @param {Array} array : The array to iterate through.
+* @param {Array} collection : The array to iterate through.
 * @param {Value} value : The value to search for.
+* @return {number}: The index of the first occurance of the value
+* Usage:
+*       let myArr = [ 1, 1, 2, 2, 2, 3 ];
+*       console.log(_.indexOf(myArr, 2))    // returns 2
 */
 
 _.indexOf = function(array, value) {
@@ -159,6 +185,10 @@ module.exports.indexOf = indexOf;
 *
 * @param {Array} array : The array to search through.
 * @param {Value} value : The value to search for. **For which to search, I mean.**
+* @return {Boolean}: True or false, whether or not value is present
+* Usage: 
+*   let myArr = [ 1, 2, 3, 4, 5 ]:
+*   console.log(_.contains(myArr, 6));      // prints false
 */
 
 _.contains = function(array, value) {
@@ -179,7 +209,11 @@ module.exports.contains = contains;
 * unique: Designed to take in an array and return a new array with all of the 
 *   duplicate elements removed.
 *
-* @param {Array} arr : the array through which to search for duplicates.
+* @param {Array} collection: the array through which to search for duplicates.
+* @return {Array} collection: A new array with all of the duplicates removed
+* Usage:
+*       let myArr = [1, 2, 2, 2, 3];
+*       console.log(_.unique(myArr));   // prints [1, 2, 3];
 */
 
 _.unique = function(arr){
@@ -204,8 +238,15 @@ module.exports.unique = unique;
 *   function and return a new array of all passing elements
 *
 * @param {Array} array : The array to filter through.
-* @param {Function} func : The function with which to check the truthiness of the
-*   elements.
+* @param {Function} test : The function with which to check the truthiness of the
+*   elements. The test function must return a boolean
+* @return {Array} collection: A new array containing the filtered collection values
+* Usage:
+*       const myArr = ['a', true, false, null, 3, true];
+*       let myBoos = _.filter(myArr, function(element){
+*           return typeOf element === 'boolean';
+*       });
+*       console.log(myBoos); // prints [true, false, true];
 */
 
 _.filter = function(array, func) {
@@ -232,6 +273,13 @@ module.exports.filter = filter;
 * @param {Array} array : The array to filter through
 * @param {Function} func : The function with which to check the truthiness of the
 *   elements. 
+* @return {Array}: A new array of all false elements;
+* Usage:
+*       let myArr = ['a', 'b', 'c', 'd'];
+        let noBs = _.filter(myArr, function(element) {
+            return element === 'b';
+        });
+        console.log(noBs);      // ['a', 'c', 'd'];
 */
 
 _.reject = function(array, func) {
@@ -261,6 +309,18 @@ module.exports.reject = reject;
 * @param {Seed} seed : an initial value for the "previousValue" the first time the
 *   function is called. If no seed is given, the initial value is the first element in the
 *   array and the loop starts at the second index.
+* @return {Value} data: The value that results from running the "reducer" callback function 
+*   to completion over the entire array.
+* Usage:
+*       let myArr = [4, 43, 2, 643, 6, 29]
+*       let biggestNum = _.reduce(myArr, function(accumulator, current){
+            if (accumulator >= current) {
+                return accumulator;
+            } else {
+                return current;
+            }
+*       });
+*       console.log(biggestNum);       // prints 643
 */
 
 _.reduce = function(array, func, seed) {
@@ -292,6 +352,18 @@ module.exports.reduce = reduce;
 *   copied. Will be returned, changed, at end of function.
 * @param {Object} object2 : The object whose values will be copied onto the target object.
 *   Can pass as many objects as arguments as required.
+* @return {Object} : returns Object1, altered.
+* Usage:
+*       let myObj = { name: 'Eric', age: 42 };
+*       let moreInfo = { canVote: true };
+*       let yetMoreInfo = { faveColor: 'Orange' }
+*       _.extend(myObj, moreInfo, yetMoreInfo);
+*       console.log(myObj);     // prints {
+                                    name: 'Eric',
+                                    age: 42,
+                                    canVote: true,
+                                    faveColor: 'Orange'
+                                    }
 */
 
 _.extend = function(object1, object2, ...objects) {
