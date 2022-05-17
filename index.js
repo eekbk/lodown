@@ -380,7 +380,219 @@ _.extend = function(object1, object2, ...objects) {
 };
 module.exports.extend = extend;
 
+
 //////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * pluck: takes an array of objects and a property and returns a new array containing the 
+ *  value of input property for every element in input array.
+ * 
+ * @param {Array}: an array of objects
+ * @param {Property}: a property to pluck from each object in the array
+ * @return {Array}: a new array containing the values of input property for each object
+ * Usage: 
+ *      let myArr = [{name: 'Eric', age: 42}, {name: 'Thom', age: 37}, {name: 'Jamie', 
+ *          age: 'timeless'}];
+ *      let ageArray = _.pluck(myArr, 'age');
+ *      console.log(ageArray);      // prints [42, 37, 'timeless'];
+ */
+ _.pluck = function(array, prop) {
+    // invoke map function on input array
+    let result = _.map(array, function(element){
+        // what should this function return
+        return element[prop];
+    });
 
+    return result;
+}
+module.exports.pluck = pluck;
 
+/////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * every: takes a collection and a function and returns a boolean statement based on
+ *  whether calling function on every element in collection is true or not.
+ * @param {Array or Object} collection: the collection containing the elements to call the
+ *  function on
+ * @param {Function}: the function to call on each element of the collection
+ * @return {Boolean}: true if every element passes the test. False otherwise
+ * Usage:
+ *      let myArr = [2, 4, 6, 8, 133];
+ *      let isEveryEven = _.every(myArr, function(element){
+ *          return element % 2 === 0;
+ *      });
+ *      console.log(isEveryEven);       // prints false
+ */
+ _.every = function(collection, func) {
+    // determine if collection is an array
+    if (Array.isArray(collection)) {
+        // loop thru array, checking if the result of calling function on current item is false
+        for (let i = 0; i < collection.length; i++) {
+            if (func && !func(collection[i], i, collection)){
+                // if so, return false
+                return false;
+            // if no function is passed in, check if any value is falsey
+            } else {
+                if (!collection[i]) {
+                    //return false
+                    return false;
+                }
+            }
+        }
+    // else its an object
+    } else {
+    // loop thru object, checking if func exists and if the result of calling function on current item is false
+        for (let key in collection) {
+            if(func && !func(collection[key], key, collection)) {
+               // if so, return falsse
+               return false;
+            // otherwise check if any value is falsey and return false if so
+            } else {
+                if (!collection[key]) {
+                    return false;
+                }
+            }
+        }
+    }
+    // else return true
+    return true;
+};
 
+module.exports.every = every;
+/////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * map: Designed to take a collection and a function. map will save the return value of 
+ *  calling the function on each element and store it in a new array which is then returned
+ * @param {Array or Object} collection: The collection containing the elements on which to
+ *      call the function
+ * @param {Function}: The function to call on the elements
+ * @return {Array}: A new array, containing the results of function being called on each 
+ *      of the elements.
+ * Usage:
+ *      let myArr = ['I', 'am', 'not', 'shouting'];
+ *      let newArr = _.map(myArr, function(element){
+ *          return element.toUpperCase();
+ *      });
+ *      console.log(newArr);        // prints ['I', 'AM', 'NOT', 'YELLING'] 
+ */
+ _.map = function(collection, func) {
+    // create output variable
+    let mapped = [];
+    // check if collection is an array
+    if (Array.isArray(collection)){
+        //iterate using for loop
+        for (let i = 0; i < collection.length; i++) {
+            let result = func(collection[i], i, collection);
+            mapped.push(result);
+        }
+     // else it's an object
+    } else {
+        for (let key in collection) {
+            let result = func(collection[key], key, collection);
+            mapped.push(result);
+        }
+
+    }
+    // return mapped
+    return mapped;
+
+}
+module.exports.map = map;
+
+//////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * some: similar to every, but designed to take a collection and return true if ANY of the 
+ *  elements return true. False otherwise.
+ * @param {Array or Object}: collection containing elements on which to test function
+ * @param {Function}: the function on which to test the elements
+ * @return {Boolean}: True if ANY of the elements pass the test. False if all fail
+ * Usage:
+ *      let myArr = [1, 3, 5, 7, 9, 144]
+ *      let isAnyEven = _.some(myArr, function(element){
+ *          return element % 2 === 0;
+ *      });
+ *      console.log(isAnyEven);     // returns true;
+ */
+ _.some = function(collection, func) {
+    // check if collection is an array
+    if (Array.isArray(collection)) {
+        // if so, iterate thru array, 
+        for (let i = 0; i  < collection.length; i++) {
+            // if function isnt provided or doesnt return boolean
+            if (!func || typeof func(collection[i], i, collection) !== 'boolean') {
+                // check if at least one element is truthy
+                if (collection[i]) {
+                    return true;
+                }
+            // else if boolean func exists, call function at every iteration 
+            } else {
+                // if return value is true for any element return true
+                if (func(collection[i], i, collection)){
+                    return true;
+                }
+            }
+        }
+    // else if collection is not an array
+    } else {
+        // iterate thru object,
+        for (let key in collection){
+            // if function isnt provided or doesnt return boolean
+            if (!func || typeof func(collection[key], key, collection) !== 'boolean'){
+                // check if at least one element is truthy
+                if (collection[key]) {
+                    return true;
+                 }
+            // else if boolean func exists, call function at every iteration
+            } else {
+                // if return value is true for any element return true
+                if (func(collection[key], key, collection)) {
+                    return true;
+                }
+            }
+        } 
+    }
+    // if false for all elements, return false
+    return false;
+}
+module.exports.some = some;
+
+///////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * partition: designed to call a function on each element of an array and return an array of 
+ *  two new arrays: one for values for which the function returned true and another for 
+ *  values which the function returned false.
+ * @param {Array}: The array containing the elements to call the function on
+ * @param {Function}: The tester function to call on each element
+ * @return {Array}: An array containing two arrays. The first contains all of the elements
+ *  on which the function returned true. The second for all falsy elements.
+ * Usage:
+ *          let myArr = [1, 2, 3, 4, 5, 6]
+ *          let evenOrOdd = _.partition(myArr, function(element){
+ *              return element % 2 === 0;
+ *          });
+ *          console.log(evenOrOdd);     // prints [[2, 4], [1, 3, 5]]
+ */
+ _.partition = function(array, func) {
+    // create an output array
+    let output = [];
+    // create a truthy array
+    let truthyArr = [];
+    // create a falsey array
+    let falseyArr = [];
+    // iterate thru the input array 
+    for (let i = 0; i < array.length; i++) {
+        // if function call returns something truthy, push to truthy array
+        if (func(array[i], i, array)) {
+            truthyArr.push(array[i]);
+        // if function call returns something falsey, push to falsey array   
+        } else if (!func(array[i], i, array)) {
+            falseyArr.push(array[i]);
+        }
+    }
+    // push truthy array and falsey array to output array
+    output.push(truthyArr, falseyArr);
+    // return output array
+    return output;
+};
+
+module.exports.partition = partition;
+
+//////////////////////////////////////////////////////////////////////////////////////////
